@@ -8,7 +8,8 @@ import (
 )
 
 var inMemoryStore = make(map[string]string)
-var redirectURL = "http://0.0.0.0:9000"
+
+//var redirectURL = "http://0.0.0.0:9000"
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
@@ -35,7 +36,10 @@ func setupRouter() *gin.Engine {
 		num, _ := c.Request.Body.Read(buf)
 		reqBody := buf[0:num]
 		temp := map[string]string{}
-		json.Unmarshal(reqBody, &temp)
+		if err := json.Unmarshal(reqBody, &temp); err != nil {
+			panic(err)
+		}
+		//		json.Unmarshal(reqBody, &temp)
 		c.JSON(http.StatusOK, reqBody)
 		voter_id := temp["voter_id"]
 		vote := temp["vote"]
@@ -46,5 +50,8 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	r := setupRouter()
-	r.Run(":9000")
+	//	r.Run(":9000")
+	if err := r.Run(":9000"); err != nil {
+		panic(err)
+	}
 }
